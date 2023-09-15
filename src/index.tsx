@@ -1,73 +1,73 @@
 import { Elysia, t } from "elysia";
-import dbSetup from "../utils/db";
+import dbSetup from "./utils/db";
 import { swagger } from "@elysiajs/swagger";
 import html from "@elysiajs/html";
 import Layout from "./components/Layout";
-import Pun from "./components/Pun";
+import Puns from "./components/Puns";
 import * as elements from "typed-html";
+import { punServices } from "./services/pun.services";
+
 
 const app = new Elysia()
+  // Pages
+  .use(html)
+  .get("/", async ({ html }) =>{
+    const res = await fetch('http://localhost:5000/api/v1/puns')
+    const puns = await res.json()
+    return html(
+      <Layout>
+        <Puns puns={puns} />
+      </Layout>
+    )}
+  )
+
+  // Swagger for checking api endpoints
   .use(
     swagger({
       path: "/swagger/v1",
     })
   )
-  .use(html)
-  .get("/", ({ html }) =>
-    html(
-      <Layout>
-        <Pun />
-      </Layout>
-    )
-  )
+
+  // Api endPoints
   .group("/api/v1", (app) => {
-    return app
-      .use(dbSetup)
-      .get("/", async ({ db }) => db.pun.findMany({}))
-      .get("/puns", async ({ db }) => db.pun.findMany({}))
-      .group("/pun", (app) => {
-        return app
-          .get(
-            "/",
-            async ({ query, db }) =>
-              db.pun.findMany({
-                where: {
-                  pun: {
-                    contains: query.searchTerm,
-                  },
-                },
-              }),
-            {
-              query: t.Object({
-                searchTerm: t.String(),
-              }),
-            }
-          )
-          .post(
-            "/",
-            async ({ db, body }) => {
-              return db.pun.create({
-                data: body,
-              });
-            },
-            {
-              body: t.Object({
-                author: t.String(),
-                pun: t.String(),
-              }),
-            }
-          )
-          .get(
-            "/:id",
-            async ({ params, db }) =>
-              db.pun.findUnique({ where: { id: parseInt(params.id) || 1 } }),
-            {
-              params: t.Object({
-                id: t.String(),
-              }),
-            }
-          );
-      });
+    return (
+      app
+        .use(dbSetup)
+        .get("/", () => <div>All Endpoints</div>)
+        .get("/puns", async ({ db }) => await punServices.getPuns(db))
+        // Grouping -> /pun/*
+        .group("/pun", (app) => {
+          return app
+            .get("/",
+              async ({ query, db }) => await punServices.getPunsBySearchTerm(query.searchTerm, db),
+              // Query schema Validation
+              {
+                query: t.Object({
+                  searchTerm: t.String(),
+                }),
+              }
+            )
+            .post("/",
+              async ({ db, body }) => await punServices.createPun(body, db),
+              // Pun payload schema Validation
+              {
+                body: t.Object({
+                  author: t.String(),
+                  pun: t.String(),
+                }),
+              }
+            )
+            .get("/:id",
+              async ({ params, db }) => await punServices.getPunById(parseInt(params.id) || 1, db),
+              // params Validation
+              {
+                params: t.Object({
+                  id: t.String(),
+                }),
+              }
+            );
+        })
+    );
   })
 
   .listen(5000);
