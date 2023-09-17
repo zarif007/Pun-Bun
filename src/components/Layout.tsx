@@ -13,8 +13,9 @@ const Layout = ({children}: elements.Children) => `<!DOCTYPE html>
   </head>
   <body>
     <!-- Content Goes here -->
-    hiiiddddsad
-    ${children}
+    <main class="mx-auto w-full max-w-5xl my-24 mx-4">
+      ${children}
+    </main>
   </body>
 </html>`
 

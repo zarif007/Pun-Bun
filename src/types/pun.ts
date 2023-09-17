@@ -4,7 +4,7 @@ interface IPun {
     author: string;
     upVote?: number;
     downVote?: number;
-    created_at?: Date;
+    createdAt?: Date | string;
 }
 
 export default IPun;

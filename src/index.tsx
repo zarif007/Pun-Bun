@@ -1,5 +1,5 @@
 import { Elysia, t } from "elysia";
-import dbSetup from "./utils/db";
+import dbSetup from "./lib/db";
 import { swagger } from "@elysiajs/swagger";
 import html from "@elysiajs/html";
 import Layout from "./components/Layout";
@@ -7,15 +7,15 @@ import Puns from "./components/Puns";
 import * as elements from "typed-html";
 import { punServices } from "./services/pun.services";
 
-
 const app = new Elysia()
   // Pages
   .use(html)
   .get("/", async ({ html }) =>{
-    const res = await fetch('http://localhost:5000/api/v1/puns')
+    const res = await fetch('http://localhost:3000/api/v1/puns')
     const puns = await res.json()
     return html(
       <Layout>
+        <img src="https://i.ibb.co/gS4CrCt/logo.png" class="mx-auto h-72 w-72" alt="Logo" />
         <Puns puns={puns} />
       </Layout>
     )}
@@ -70,7 +70,7 @@ const app = new Elysia()
     );
   })
 
-  .listen(5000);
+  .listen(3000);
 
 console.log(
   `🦊 Elysia is running at ${app.server?.hostname}:${app.server?.port}`
