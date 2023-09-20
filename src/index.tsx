@@ -7,6 +7,7 @@ import Puns from "./components/Puns";
 import * as elements from "typed-html";
 import { punServices } from "./services/pun.services";
 import fetchPuns from "./utils/fetchPuns";
+import HomePage from "./components/Home.Page";
 
 const app = new Elysia()
   // Pages
@@ -14,22 +15,7 @@ const app = new Elysia()
   .get("/", async ({ html }) => {
     const puns = await fetchPuns();
     return html(
-      <Layout>
-        <img
-          src="https://i.ibb.co/gS4CrCt/logo.png"
-          class="mx-auto h-72 w-72"
-          alt="Logo"
-        />
-        <div class="flex justify-end my-2">
-          <a
-            href="/create"
-            class="px-6 py-2 bg-blue-500 hover:bg-blue-700 text-white font-semibold rounded"
-          >
-            Create
-          </a>
-        </div>
-        <Puns puns={puns} />
-      </Layout>
+      <HomePage puns={puns} />
     );
   })
   .get("/create", async ({ html }) => {})
