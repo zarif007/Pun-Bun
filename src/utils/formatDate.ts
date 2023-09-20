@@ -8,7 +8,7 @@ const formateDate = (createdAt: string | Date): string => {
     const year = date.getFullYear();
 
     // Create the desired Day, Month, Year format string
-    const formattedDate = `${day} ${month} ${year}`;
+    const formattedDate = `${day} ${month}, ${year}`;
 
     return formattedDate
 }
