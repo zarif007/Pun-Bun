@@ -2,8 +2,6 @@ import { Elysia, t } from "elysia";
 import dbSetup from "./lib/db";
 import { swagger } from "@elysiajs/swagger";
 import html from "@elysiajs/html";
-import Layout from "./components/Layout";
-import Puns from "./components/Puns";
 import * as elements from "typed-html";
 import { punServices } from "./services/pun.services";
 import fetchPuns from "./utils/fetchPuns";
@@ -14,12 +12,14 @@ const app = new Elysia()
   .use(html)
   .get("/", async ({ html }) => {
     const puns = await fetchPuns();
-    return html(
-      <HomePage puns={puns} />
-    );
+    return html(<HomePage puns={puns} />);
   })
   .get("/create", async ({ html }) => {})
-
+  .get("/search", async ({ query, html }) => html(<h1>hiii</h1>), {
+    query: t.Object({
+      searchInput: t.String(),
+    }),
+  })
   // Swagger for checking api endpoints
   .use(
     swagger({
@@ -32,6 +32,11 @@ const app = new Elysia()
     return (
       app
         .use(dbSetup)
+        .get("/search", async ({ query, set }) => set.redirect = `/search?searchInput=${query.searchInput}`, {
+          query: t.Object({
+            searchInput: t.String(),
+          }),
+        })
         .get("/puns", async ({ db }) => await punServices.getPuns(db))
         // Grouping -> /pun/*
         .group("/pun", (app) => {

@@ -7,22 +7,20 @@ const HomePage = ({ puns }: { puns: IPun[] }) => {
   return (
     <Layout>
       <div class="flex justify-center space-x-3">
-  <input
-    id="searchInput"
-    name="searchInput"
-    placeholder="Search"
-    class="w-[30%] px-2 py-2 border-2 border-gray-900 rounded"
-  />
-  <a
-    id="searchButton"
-    class="px-6 py-2 bg-blue-500 hover:bg-blue-700 text-white font-semibold rounded"
-  >
-    Search
-  </a>
-</div>
-
-      <div class="column">
-        <input class="input" name="item_quantity" type="number" />
+        <input
+          id="searchInput"
+          name="searchInput"
+          placeholder="Search"
+          class="w-[30%] px-2 py-2 border-2 border-gray-900 rounded"
+        />
+        <a
+          id="searchButton"
+          class="px-6 py-2 bg-blue-500 hover:bg-blue-700 text-white font-semibold rounded"
+          hx-get="/api/v1/search"
+          hx-include="[name='searchInput']"
+        >
+          Search
+        </a>
       </div>
 
       <img
